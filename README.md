@@ -1,7 +1,7 @@
 # Wired Pet: Lain
 by realmxrza
 
-Interactive physics-based desktop pet of Lain Iwakura. This script implements organic movement, momentum-based dragging, and a random Bear Suit transformation protocol for the Discord client.
+Interactive physics-based desktop pet of Lain Iwakura. This script implements organic movement, momentum-based dragging, and a random Bear Lain for the Discord client. It also randomly talks on a text box.
 
 ### ( TEMPORARY )
 1. Press `Ctrl` + `Shift` + `I` to open Developer Tools.

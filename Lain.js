@@ -1,11 +1,15 @@
 (function() {
+
     if (window.__LAIN_PET_INITIALIZED__) return;
     window.__LAIN_PET_INITIALIZED__ = true;
+
     const init = () => {
+
         if (!document.body) {
             setTimeout(init, 100);
             return;
         }
+
         const SPRITES = {
             default: 'https://media.tenor.com/XLprFoJLe6kAAAAi/lain-serial-experiments-lain.gif',
             bear: 'https://media.tenor.com/Xqae1hr-ATwAAAAi/lain-onesie.gif',
@@ -323,6 +327,8 @@
 
         updateLogic();
         render();
+
     };
+
     init();
 })();

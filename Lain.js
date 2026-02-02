@@ -53,7 +53,7 @@
         if (bearMode) return;
         bearMode = true;
         velX = 0; velY = 0;
-        lain.style.width = "110px";
+        lain.style.width = "200px";
         lain.src = bearOnesie;
         setTimeout(() => {
             lain.src = defaultSprite;

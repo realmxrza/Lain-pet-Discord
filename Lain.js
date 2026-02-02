@@ -1,8 +1,3 @@
-/**
- * Wired Pet: Lain 
- * realmxrza
- */
-
 (function() {
     const SPRITES = {
         default: 'https://media.tenor.com/XLprFoJLe6kAAAAi/lain-serial-experiments-lain.gif',

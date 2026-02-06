@@ -1,4 +1,8 @@
-(function() {
+/**
+ * Lain Pet Project by realmxrza
+ * Optimized for Vencord Preload
+ */
+const initLainPet = () => {
     const assets = {
         default: { idle: 'https://raw.githubusercontent.com/realmxrza/Lain-pet-Discord/main/assets/1.png', right: 'https://raw.githubusercontent.com/realmxrza/Lain-pet-Discord/main/assets/lainwalk1.gif', left: 'https://raw.githubusercontent.com/realmxrza/Lain-pet-Discord/main/assets/lainwalk2.gif' },
         school: { idle: 'https://raw.githubusercontent.com/realmxrza/Lain-pet-Discord/main/assets/115.png', right: 'https://raw.githubusercontent.com/realmxrza/Lain-pet-Discord/main/assets/lainwalk3.gif', left: 'https://raw.githubusercontent.com/realmxrza/Lain-pet-Discord/main/assets/lainwalk4.gif', event: 'https://raw.githubusercontent.com/realmxrza/Lain-pet-Discord/main/assets/lainburn.gif' },
@@ -15,7 +19,6 @@
     };
 
     const dialogues = ["Present day. Present time. Hahahaha!", "Why don't you come to the Wired?", "Everyone is connected.", "The real world isn't real at all."];
-
     let state = { x: 100, y: 100, vx: 0, vy: 0, targetX: 100, targetY: 100, outfit: 'default', mode: 'idle', isDragging: false, eventActive: false, sugarRush: false };
     let naviItem = null;
     let naviLanded = false;
@@ -49,12 +52,9 @@
             state.targetX = parseFloat(naviItem.style.left);
             state.targetY = parseFloat(naviItem.style.top);
             state.mode = 'walk';
-            
             const dx = (state.x + normalSize/2) - (state.targetX + 60);
             const dy = (state.y + normalSize/2) - (state.targetY + 60);
-            const distance = Math.sqrt(dx*dx + dy*dy);
-            
-            if (distance < 30) {
+            if (Math.sqrt(dx*dx + dy*dy) < 30) {
                 naviItem.remove(); naviItem = null; naviLanded = false;
                 triggerSugarRush();
                 showDialogue("NAVI COLLECTED.");
@@ -94,15 +94,12 @@
         lain.style.width = `${size}px`;
         lain.style.left = `${state.x}px`;
         lain.style.top = `${state.y}px`;
-        
         shadow.style.width = `${size * 0.7}px`;
         shadow.style.height = `${size * 0.1}px`;
         shadow.style.left = `${state.x + (size * 0.15)}px`;
         shadow.style.top = `${state.y + (size * 0.9)}px`;
-
         bubble.style.left = `${state.x + (size/2) - 75}px`;
         bubble.style.top = `${state.y - 50}px`;
-
         expression.style.left = `${state.x + (size/2) - 25}px`;
         expression.style.top = `${state.y - 40}px`;
 
@@ -115,8 +112,7 @@
 
     function triggerExpression() {
         if (state.eventActive) return;
-        const isBear = state.outfit === 'bear';
-        expression.src = isBear ? assets.misc.exp2 : assets.misc.exp1;
+        expression.src = state.outfit === 'bear' ? assets.misc.exp2 : assets.misc.exp1;
         expression.style.opacity = 1;
         setTimeout(() => { expression.style.opacity = 0; }, 3000);
     }
@@ -125,7 +121,7 @@
         if (state.eventActive) return;
         state.eventActive = true;
         const eventType = type || state.outfit;
-        if (assets[eventType] && assets[eventType].event) {
+        if (assets[eventType]?.event) {
             lain.src = assets[eventType].event;
             const duration = eventType === 'bear' ? 8000 : (eventType === 'school' ? 3000 : 10000);
             setTimeout(() => { state.eventActive = false; state.mode = 'idle'; }, duration);
@@ -139,14 +135,8 @@
         item.style = `position:fixed; width:${size}px; z-index:9998; pointer-events:none; transition: left 8s linear; top: ${Math.random() * (window.innerHeight - size)}px;`;
         const startX = Math.random() < 0.5 ? -size : window.innerWidth + size;
         item.style.left = `${startX}px`;
-
         const movingRight = startX < 0;
-        if (type === 'crow') {
-            item.style.transform = movingRight ? 'scaleX(1)' : 'scaleX(-1)';
-        } else if (type === 'girl') {
-            item.style.transform = movingRight ? 'scaleX(-1)' : 'scaleX(1)';
-        }
-
+        item.style.transform = (type === 'crow') ? (movingRight ? 'scaleX(1)' : 'scaleX(-1)') : (movingRight ? 'scaleX(-1)' : 'scaleX(1)');
         document.body.appendChild(item);
         setTimeout(() => { item.style.left = `${movingRight ? window.innerWidth + size : -size}px`; }, 100);
         setTimeout(() => item.remove(), 9000);
@@ -157,14 +147,10 @@
         const navi = document.createElement('img');
         navi.src = assets.misc.navi[Math.floor(Math.random()*3)];
         navi.style = `position:fixed; width:120px; z-index:9997; pointer-events:none; transition: top 6s linear; top:-150px;`;
-        const x = Math.random() * (window.innerWidth - 120);
-        navi.style.left = `${x}px`;
+        navi.style.left = `${Math.random() * (window.innerWidth - 120)}px`;
         document.body.appendChild(navi);
-        naviItem = navi;
-        naviLanded = false;
-        setTimeout(() => { 
-            navi.style.top = `${window.innerHeight - 150}px`; 
-        }, 100);
+        naviItem = navi; naviLanded = false;
+        setTimeout(() => { navi.style.top = `${window.innerHeight - 150}px`; }, 100);
         setTimeout(() => { naviLanded = true; }, 6000);
         setTimeout(() => { if (naviItem === navi) { navi.remove(); naviItem = null; naviLanded = false; } }, 15000);
     }
@@ -198,6 +184,7 @@
         window.onmouseup = () => { state.isDragging = false; window.onmousemove = null; };
     };
 
+    // Global Export
     window.Lain = {
         forceRoll: () => triggerSpecialEvent('bear'),
         forceBurn: () => triggerSpecialEvent('school'),
@@ -212,5 +199,11 @@
     };
 
     console.log("%c Lain Pet Project by realmxrza ", "background: #000; color: #f0f; font-weight: bold; font-size: 14px;");
-    console.log("Commands:\n- Lain.setOutfit('bear'|'school'|'pink'|'default')\n- Lain.forceRoll()\n- Lain.forceBurn()\n- Lain.forceDance()\n- Lain.dropNavi()\n- Lain.spawnCrow()\n- Lain.spawnGirl()\n- Lain.speak('text')\n- Lain.express()");
-})();
+};
+
+// Vencord Preload Loader
+if (document.readyState === "complete") {
+    initLainPet();
+} else {
+    window.addEventListener("load", initLainPet);
+}

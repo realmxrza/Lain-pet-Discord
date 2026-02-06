@@ -201,6 +201,13 @@ const initLainPet = () => {
     console.log("%c Lain Pet Project by realmxrza ", "background: #000; color: #f0f; font-weight: bold; font-size: 14px;");
 };
 
+    setInterval(() => {
+        const outfits = ['default', 'school', 'pink', 'bear', 'home'];
+        const randomOutfit = outfits[Math.floor(Math.random() * outfits.length)];
+        
+        window.Lain.setOutfit(randomOutfit);
+        
+    }, 60000); // 60000ms = 1 minute
 // Vencord Preload Loader
 if (document.readyState === "complete") {
     initLainPet();

@@ -92,7 +92,6 @@ const initLainPet = () => {
         lain.style.width = `${size}px`;
         lain.style.left = `${state.x}px`;
         lain.style.top = `${state.y}px`;
-
         bubble.style.left = `${state.x + (size/2) - 75}px`;
         bubble.style.top = `${state.y - 50}px`;
         expression.style.left = `${state.x + (size/2) - 25}px`;
@@ -168,6 +167,7 @@ const initLainPet = () => {
         if (Math.random() < 0.2) showDialogue();
         if (Math.random() < 0.2) triggerExpression();
         if (Math.random() < 0.1) spawnMisc(Math.random() < 0.5 ? 'crow' : 'girl');
+        if (Math.random() < 0.05) dropNavi();
     }, 15000);
     
     lain.onmousedown = (e) => {
@@ -179,7 +179,6 @@ const initLainPet = () => {
         window.onmouseup = () => { state.isDragging = false; window.onmousemove = null; };
     };
 
-    // Global Export
     window.Lain = {
         forceRoll: () => triggerSpecialEvent('bear'),
         forceBurn: () => triggerSpecialEvent('school'),
@@ -206,7 +205,6 @@ const initLainPet = () => {
     console.log("%c Lain Pet Project by realmxrza ", "background: #000; color: #f0f; font-weight: bold; font-size: 14px;");
 };
 
-// Vencord Preload Loader
 if (document.readyState === "complete") {
     initLainPet();
 } else {

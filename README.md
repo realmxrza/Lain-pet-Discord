@@ -1,4 +1,4 @@
-# Wired Pet: Lain
+# Wired Pet: Lain V2.0
 by realmxrza
 
 ### ( TEMPORARY )

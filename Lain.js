@@ -1,334 +1,216 @@
 (function() {
-
-    if (window.__LAIN_PET_INITIALIZED__) return;
-    window.__LAIN_PET_INITIALIZED__ = true;
-
-    const init = () => {
-
-        if (!document.body) {
-            setTimeout(init, 100);
-            return;
+    const assets = {
+        default: { idle: 'https://raw.githubusercontent.com/realmxrza/Lain-pet-Discord/main/assets/1.png', right: 'https://raw.githubusercontent.com/realmxrza/Lain-pet-Discord/main/assets/lainwalk1.gif', left: 'https://raw.githubusercontent.com/realmxrza/Lain-pet-Discord/main/assets/lainwalk2.gif' },
+        school: { idle: 'https://raw.githubusercontent.com/realmxrza/Lain-pet-Discord/main/assets/115.png', right: 'https://raw.githubusercontent.com/realmxrza/Lain-pet-Discord/main/assets/lainwalk3.gif', left: 'https://raw.githubusercontent.com/realmxrza/Lain-pet-Discord/main/assets/lainwalk4.gif', event: 'https://raw.githubusercontent.com/realmxrza/Lain-pet-Discord/main/assets/lainburn.gif' },
+        pink: { idle: 'https://raw.githubusercontent.com/realmxrza/Lain-pet-Discord/main/assets/116.png', right: 'https://raw.githubusercontent.com/realmxrza/Lain-pet-Discord/main/assets/lainwalk5.gif', left: 'https://raw.githubusercontent.com/realmxrza/Lain-pet-Discord/main/assets/lainwalk6.gif', event: 'https://raw.githubusercontent.com/realmxrza/Lain-pet-Discord/main/assets/laindance.gif' },
+        bear: { idle: 'https://raw.githubusercontent.com/realmxrza/Lain-pet-Discord/main/assets/117.png', right: 'https://raw.githubusercontent.com/realmxrza/Lain-pet-Discord/main/assets/lainwalk7.gif', left: 'https://raw.githubusercontent.com/realmxrza/Lain-pet-Discord/main/assets/lainwalk8.gif', event: 'https://raw.githubusercontent.com/realmxrza/Lain-pet-Discord/main/assets/lainroll.gif' },
+        home: { idle: 'https://raw.githubusercontent.com/realmxrza/Lain-pet-Discord/main/assets/118.png', right: 'https://raw.githubusercontent.com/realmxrza/Lain-pet-Discord/main/assets/lainwalk9.gif', left: 'https://raw.githubusercontent.com/realmxrza/Lain-pet-Discord/main/assets/lainwalk10.gif' },
+        misc: { 
+            crow: 'https://raw.githubusercontent.com/realmxrza/Lain-pet-Discord/main/assets/crow.gif', 
+            girl: 'https://raw.githubusercontent.com/realmxrza/Lain-pet-Discord/main/assets/flyinggirl.gif', 
+            navi: ['https://raw.githubusercontent.com/realmxrza/Lain-pet-Discord/main/assets/navi1.gif', 'https://raw.githubusercontent.com/realmxrza/Lain-pet-Discord/main/assets/navi2.gif', 'https://raw.githubusercontent.com/realmxrza/Lain-pet-Discord/main/assets/navi3.gif'],
+            exp1: 'https://raw.githubusercontent.com/realmxrza/Lain-pet-Discord/main/assets/expression1.gif?raw=true',
+            exp2: 'https://raw.githubusercontent.com/realmxrza/Lain-pet-Discord/main/assets/expression2.gif?raw=true'
         }
-
-        const SPRITES = {
-            default: 'https://media.tenor.com/XLprFoJLe6kAAAAi/lain-serial-experiments-lain.gif',
-            bear: 'https://media.tenor.com/Xqae1hr-ATwAAAAi/lain-onesie.gif',
-            ad: 'https://media1.tenor.com/m/2EZjkce1wDoAAAAC/skip-ads.gif'
-        };
-
-        const EXTRAS = [
-            'https://media.tenor.com/6OjWREBRRf0AAAAm/comment.webp',
-            'https://media.tenor.com/ZKBDtqe2rkwAAAAj/flowers-cherryblossom-pink-gif-png-cute.gif',
-            'https://media.tenor.com/OEPDshveEx0AAAAi/butterfly.gif',
-            'https://media.tenor.com/oFs2KYe8cAUAAAAj/aw-snap.gif',
-            'https://media.tenor.com/AIEsLpFUaIsAAAAj/javascript-scroll.gif'
-        ];
-
-        const BRAIN = [
-            ["There is no boundary between the Wired", "and the real world."],
-            "The real world isn't real at all.",
-            "Why don't you come to the Wired?",
-            "You are just a software application.",
-            ["Rumors are a kind of medium, you know.", "They're much more fluid than data."],
-            "Who is the 'real' me?",
-            "No matter where you are... everyone is always connected.",
-            "Present day. Present time. Hahahaha!"
-        ];
-
-        let state = {
-            posX: 100, posY: 100,
-            velX: 0, velY: 0,
-            mouse: { x: 0, y: 0 },
-            clone: { x: 0, y: 0, active: false },
-            ad: { x: 0, y: 0, active: false },
-            dragging: false, glitching: false,
-            bearMode: false, talking: false,
-            sugarRush: false,
-            lastInteraction: Date.now(),
-            angle: Math.random() * Math.PI * 2,
-            speed: 0.5
-        };
-
-        const PHYSICS = {
-            friction: 0.95,
-            chaseSpeed: 10,
-            escapeSpeed: 14,
-            sugarSpeed: 18,
-            safeDistance: 65,
-            orbitRadius: 150
-        };
-
-        const dialBox = document.createElement('div');
-        dialBox.style.cssText = `
-            position: fixed; padding: 8px 12px; background: rgba(10, 0, 20, 0.9);
-            border: 1px solid #a0f; border-radius: 8px; color: #0f0;
-            font-family: monospace; font-size: 12px; width: 220px;
-            pointer-events: none; z-index: 1000000; opacity: 0;
-            transition: opacity 0.3s; box-shadow: 0 0 10px rgba(160, 0, 255, 0.3);
-        `;
-        document.body.appendChild(dialBox);
-
-        const createEntity = (src, zIndex, opacity = 0, isInteractive = false) => {
-            const img = document.createElement('img');
-            img.src = src;
-            img.style.cssText = `
-                position: fixed; width: 100px; z-index: ${zIndex}; opacity: ${opacity};
-                pointer-events: ${isInteractive ? 'auto' : 'none'};
-                user-select: none; transition: transform 0.2s linear, opacity 0.5s ease;
-                left: 0; top: 0;
-            `;
-            document.body.appendChild(img);
-            return img;
-        };
-
-        const lain = createEntity(SPRITES.default, 999999, 1, true);
-        lain.style.cursor = 'grab';
-        const shadow = createEntity(SPRITES.default, 999998);
-        shadow.style.filter = 'invert(1) hue-rotate(180deg) blur(1px)';
-        const popUp = createEntity(SPRITES.ad, 999997);
-        popUp.style.width = '120px';
-        const extraIcon = createEntity('', 1000001); 
-        extraIcon.style.width = '50px';
-
-        function talk(script, index = 0) {
-            if (state.dragging || state.bearMode || state.sugarRush) { state.talking = false; dialBox.style.opacity = "0"; return; }
-            state.talking = true;
-            const line = Array.isArray(script) ? script[index] : script;
-            dialBox.innerText = line;
-            dialBox.style.opacity = "1";
-            let time = Array.isArray(script) ? 3500 : 6000;
-            setTimeout(() => {
-                if (Array.isArray(script) && index < script.length - 1 && !state.dragging) {
-                    talk(script, index + 1);
-                } else {
-                    dialBox.style.opacity = "0";
-                    state.talking = false;
-                }
-            }, time);
-        }
-
-        function showExtra() {
-            if (extraIcon.style.opacity === "1") return;
-            extraIcon.src = EXTRAS[Math.floor(Math.random() * EXTRAS.length)];
-            extraIcon.style.opacity = "1";
-            setTimeout(() => { extraIcon.style.opacity = "0"; }, 5000);
-        }
-
-        function runBearMode() {
-            if (state.bearMode || state.dragging || state.sugarRush) return;
-            state.bearMode = true;
-            state.velX = 0; state.velY = 0;
-            lain.src = SPRITES.bear;
-            lain.style.width = "200px";
-            setTimeout(() => {
-                lain.src = SPRITES.default;
-                lain.style.width = "100px";
-                state.bearMode = false;
-            }, 7100);
-        }
-
-        function triggerSugarRush() {
-            if (state.sugarRush || state.dragging) return;
-            state.sugarRush = true;
-            state.speed = PHYSICS.sugarSpeed;
-            state.angle = Math.random() * Math.PI * 2;
-            setTimeout(() => {
-                state.sugarRush = false;
-                state.speed = 0.5;
-                state.glitching = false;
-            }, 8000);
-        }
-
-        window.addEventListener('mousemove', (e) => {
-            state.mouse.x = e.clientX; state.mouse.y = e.clientY;
-            state.lastInteraction = Date.now();
-        });
-
-        window.addEventListener('keydown', (e) => {
-            if (e.key.toLowerCase() === 'b') runBearMode();
-            state.glitching = true;
-            setTimeout(() => state.glitching = false, 500);
-        });
-
-        lain.onmousedown = (e) => {
-            if (state.bearMode) return;
-            state.dragging = true;
-            state.ad.active = false;
-            state.clone.active = false;
-            state.sugarRush = false;
-            shadow.style.opacity = "0";
-            popUp.style.opacity = "0";
-            dialBox.style.opacity = "0";
-            extraIcon.style.opacity = "0";
-            let offsetX = e.clientX - state.posX;
-            let offsetY = e.clientY - state.posY;
-            const onDrag = (ev) => {
-                const nextX = ev.clientX - offsetX;
-                const nextY = ev.clientY - offsetY;
-                state.velX = ev.movementX * 0.8;
-                state.velY = ev.movementY * 0.8;
-                state.posX = nextX;
-                state.posY = nextY;
-                updateStyle(lain, state.posX, state.posY);
-            };
-            const stopDrag = () => {
-                state.dragging = false;
-                window.removeEventListener('mousemove', onDrag);
-                window.removeEventListener('mouseup', stopDrag);
-            };
-            window.addEventListener('mousemove', onDrag);
-            window.addEventListener('mouseup', stopDrag);
-        };
-
-        function updateLogic() {
-            if (state.dragging || state.bearMode) return setTimeout(updateLogic, 1000);
-
-            if (state.sugarRush) {
-                state.speed = PHYSICS.sugarSpeed;
-            }
-            else if (state.clone.active) {
-                
-                const dx = state.posX - state.clone.x;
-                const dy = state.posY - state.clone.y;
-                const dist = Math.sqrt(dx*dx + dy*dy);
-                
-                if (dist < 150) {
-                    state.angle = Math.atan2(dy, dx) + (Math.random() - 0.5) * 0.5;
-                    state.speed = PHYSICS.escapeSpeed;
-                } else {
-                    state.speed = PHYSICS.chaseSpeed;
-                }
-            } 
-            else if (state.ad.active) {
-                const dx = state.ad.x - state.posX;
-                const dy = state.ad.y - state.posY;
-                state.angle = Math.atan2(dy, dx);
-                state.speed = 12;
-                if (Math.sqrt(dx*dx + dy*dy) < 30) {
-                    state.ad.active = false;
-                    popUp.style.opacity = '0';
-                    state.glitching = true;
-                    setTimeout(() => state.glitching = false, 500);
-                }
-            } 
-            else if (Date.now() - state.lastInteraction <= 60000) {
-                if (Math.abs(state.velX) < 0.5 && Math.abs(state.velY) < 0.5) {
-                    state.angle += (Math.random() - 0.5) * 1.5;
-                    state.speed = Math.random() * 2 + 0.5;
-                    state.velX = Math.cos(state.angle) * state.speed;
-                    state.velY = Math.sin(state.angle) * state.speed;
-
-                    const roll = Math.random();
-                    if (roll < 0.05) { 
-                        if (!state.talking) talk(BRAIN[Math.floor(Math.random() * BRAIN.length)]);
-                    } else if (roll < 0.10) {
-                        state.clone.active = true;
-
-                        const spawnAngle = Math.random() * Math.PI * 2;
-                        state.clone.x = state.posX + Math.cos(spawnAngle) * 400;
-                        state.clone.y = state.posY + Math.sin(spawnAngle) * 400;
-                        shadow.style.opacity = "0.7";
-                        setTimeout(() => { state.clone.active = false; shadow.style.opacity = "0"; }, 10000);
-                    } else if (roll < 0.15) {
-                        state.ad.x = Math.random() * (window.innerWidth - 150);
-                        state.ad.y = Math.random() * (window.innerHeight - 150);
-                        state.ad.active = true;
-                        popUp.style.left = `${state.ad.x}px`;
-                        popUp.style.top = `${state.ad.y}px`;
-                        popUp.style.opacity = '1';
-                    } else if (roll < 0.18) {
-                        triggerSugarRush();
-                    } else if (roll < 0.22) {
-                        runBearMode();
-                    } else if (roll < 0.37) {
-                        showExtra();
-                    }
-                }
-            }
-            setTimeout(updateLogic, (state.clone.active || state.ad.active || state.sugarRush) ? 50 : 2000);
-        }
-
-        function render() {
-            const curW = state.bearMode ? 200 : 100;
-            const limitX = window.innerWidth - curW;
-            const limitY = window.innerHeight - curW;
-
-            if (!state.dragging) {
-                if (state.bearMode) { /* static */ }
-                else if (state.clone.active || state.ad.active || state.sugarRush) {
-                    state.posX += Math.cos(state.angle) * state.speed;
-                    state.posY += Math.sin(state.angle) * state.speed;
-                    if (state.posX <= 0 || state.posX >= limitX) {
-                        state.angle = Math.PI - state.angle;
-                        if (state.sugarRush) state.glitching = true;
-                    }
-                    if (state.posY <= 0 || state.posY >= limitY) {
-                        state.angle = -state.angle;
-                        if (state.sugarRush) state.glitching = true;
-                    }
-                } 
-                else if (Date.now() - state.lastInteraction > 60000) {
-                    const time = Date.now() * 0.002;
-                    state.posX += (state.mouse.x + Math.cos(time) * PHYSICS.orbitRadius - (curW/2) - state.posX) * 0.05;
-                    state.posY += (state.mouse.y + Math.sin(time) * PHYSICS.orbitRadius - (curW/2) - state.posY) * 0.05;
-                } 
-                else {
-                    state.posX += state.velX;
-                    state.posY += state.velY;
-                    state.velX *= PHYSICS.friction;
-                    state.velY *= PHYSICS.friction;
-                    if (state.posX <= 0 || state.posX >= limitX) state.velX *= -1;
-                    if (state.posY <= 0 || state.posY >= limitY) state.velY *= -1;
-                }
-
-                state.posX = Math.max(0, Math.min(state.posX, limitX));
-                state.posY = Math.max(0, Math.min(state.posY, limitY));
-
-                const lookDir = (state.clone.active || state.ad.active || state.sugarRush) ? Math.cos(state.angle) : state.velX;
-                if (Math.abs(lookDir) > 0.1) {
-                    lain.style.transform = lookDir > 0 ? 'scaleX(1)' : 'scaleX(-1)';
-                }
-                
-                if (state.sugarRush) {
-                    const hue = (Date.now() % 1000) / 1000 * 360;
-                    lain.style.filter = `hue-rotate(${hue}deg) brightness(1.5) drop-shadow(0 0 10px #fff)`;
-                } else {
-                    lain.style.filter = state.glitching ? "invert(1) hue-rotate(250deg) contrast(2)" : "drop-shadow(2px 4px 6px rgba(0,0,0,0.5))";
-                }
-                
-                updateStyle(lain, state.posX, state.posY);
-
-                const centerX = state.posX + (curW / 2);
-                extraIcon.style.left = (centerX - 25) + 'px';
-                extraIcon.style.top = (state.posY - 60) + 'px';
-                dialBox.style.left = (state.posX - 20) + 'px';
-                dialBox.style.top = (state.posY - dialBox.offsetHeight - 15) + 'px';
-
-                if (state.clone.active) {
-                    const dx = state.posX - state.clone.x;
-                    const dy = state.posY - state.clone.y;
-                    const dist = Math.sqrt(dx*dx + dy*dy);
-                    const move = dist < PHYSICS.safeDistance ? 0 : PHYSICS.chaseSpeed;
-                    if (dist > 5) {
-                        state.clone.x += (dx/dist) * move;
-                        state.clone.y += (dy/dist) * move;
-                    }
-                    updateStyle(shadow, state.clone.x, state.clone.y);
-                    shadow.style.transform = (state.posX - state.clone.x) > 0 ? 'scaleX(1)' : 'scaleX(-1)';
-                }
-            }
-            requestAnimationFrame(render);
-        }
-
-        function updateStyle(el, x, y) {
-            el.style.left = `${x}px`;
-            el.style.top = `${y}px`;
-        }
-
-        updateLogic();
-        render();
-
     };
 
-    init();
+    const dialogues = ["Present day. Present time. Hahahaha!", "Why don't you come to the Wired?", "Everyone is connected.", "The real world isn't real at all."];
+
+    let state = { x: 100, y: 100, vx: 0, vy: 0, targetX: 100, targetY: 100, outfit: 'default', mode: 'idle', isDragging: false, eventActive: false, sugarRush: false };
+    let naviItem = null;
+    let naviLanded = false;
+
+    const container = document.createElement('div');
+    container.style = "position:fixed; z-index:9999; pointer-events:none; top:0; left:0; width:100vw; height:100vh;";
+    const shadow = document.createElement('div');
+    shadow.style = "position:absolute; background:rgba(0,0,0,0.3); border-radius:50%; filter:blur(4px); transition: all 0.3s;";
+    const lain = document.createElement('img');
+    lain.style = "position:absolute; width:100px; pointer-events:auto; cursor:grab; transition: filter 0.2s; object-fit: contain;";
+    const bubble = document.createElement('div');
+    bubble.style = "position:absolute; background:white; border:2px solid black; padding:8px; border-radius:10px; font-family:monospace; font-size:12px; opacity:0; transition: opacity 0.5s; width:150px; text-align:center; z-index:10000; pointer-events:none;";
+    const expression = document.createElement('img');
+    expression.style = "position:absolute; width:50px; opacity:0; transition: opacity 0.3s; z-index:10001; pointer-events:none;";
+
+    document.body.appendChild(container);
+    container.appendChild(shadow);
+    container.appendChild(lain);
+    container.appendChild(bubble);
+    container.appendChild(expression);
+
+    function updatePhysics() {
+        if (state.isDragging) return;
+        const normalSize = 100;
+        const eventSize = 200; 
+        const currentSize = state.eventActive ? eventSize : normalSize;
+        const rightEdge = window.innerWidth - currentSize;
+        const bottomEdge = window.innerHeight - currentSize;
+
+        if (naviItem && naviLanded) {
+            state.targetX = parseFloat(naviItem.style.left);
+            state.targetY = parseFloat(naviItem.style.top);
+            state.mode = 'walk';
+            
+            const dx = (state.x + normalSize/2) - (state.targetX + 60);
+            const dy = (state.y + normalSize/2) - (state.targetY + 60);
+            const distance = Math.sqrt(dx*dx + dy*dy);
+            
+            if (distance < 30) {
+                naviItem.remove(); naviItem = null; naviLanded = false;
+                triggerSugarRush();
+                showDialogue("NAVI COLLECTED.");
+            }
+        }
+
+        if (state.eventActive) {
+            state.x += ( (window.innerWidth/2 - eventSize/2) - state.x) * 0.1;
+            state.y += ( (window.innerHeight/2 - eventSize/2) - state.y) * 0.1;
+        } else if (state.sugarRush) {
+            state.x += state.vx * 4; state.y += state.vy * 4;
+            if (state.x <= 0 || state.x >= rightEdge) state.vx *= -1;
+            if (state.y <= 0 || state.y >= bottomEdge) state.vy *= -1;
+            state.x = Math.max(0, Math.min(state.x, rightEdge));
+            state.y = Math.max(0, Math.min(state.y, bottomEdge));
+        } else if (state.mode === 'walk') {
+            const dx = state.targetX - state.x;
+            const dy = state.targetY - state.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist > 5) {
+                state.vx = (dx / dist) * 4;
+                state.vy = (dy / dist) * 4;
+                state.x += state.vx; state.y += state.vy;
+            } else { state.mode = 'idle'; }
+        } else {
+            if (Math.random() < 0.01) {
+                state.targetX = Math.random() * (window.innerWidth - normalSize);
+                state.targetY = Math.random() * (window.innerHeight - normalSize);
+                state.mode = 'walk';
+            }
+        }
+        draw();
+    }
+
+    function draw() {
+        const size = state.eventActive ? 200 : 100;
+        lain.style.width = `${size}px`;
+        lain.style.left = `${state.x}px`;
+        lain.style.top = `${state.y}px`;
+        
+        shadow.style.width = `${size * 0.7}px`;
+        shadow.style.height = `${size * 0.1}px`;
+        shadow.style.left = `${state.x + (size * 0.15)}px`;
+        shadow.style.top = `${state.y + (size * 0.9)}px`;
+
+        bubble.style.left = `${state.x + (size/2) - 75}px`;
+        bubble.style.top = `${state.y - 50}px`;
+
+        expression.style.left = `${state.x + (size/2) - 25}px`;
+        expression.style.top = `${state.y - 40}px`;
+
+        if (!state.eventActive) {
+            let newSrc = state.mode === 'walk' ? (state.vx >= 0 ? assets[state.outfit].right : assets[state.outfit].left) : assets[state.outfit].idle;
+            if (lain.src !== newSrc) lain.src = newSrc;
+        }
+        lain.style.filter = state.sugarRush ? `hue-rotate(${Date.now() % 360}deg) brightness(1.2)` : '';
+    }
+
+    function triggerExpression() {
+        if (state.eventActive) return;
+        const isBear = state.outfit === 'bear';
+        expression.src = isBear ? assets.misc.exp2 : assets.misc.exp1;
+        expression.style.opacity = 1;
+        setTimeout(() => { expression.style.opacity = 0; }, 3000);
+    }
+
+    function triggerSpecialEvent(type) {
+        if (state.eventActive) return;
+        state.eventActive = true;
+        const eventType = type || state.outfit;
+        if (assets[eventType] && assets[eventType].event) {
+            lain.src = assets[eventType].event;
+            const duration = eventType === 'bear' ? 8000 : (eventType === 'school' ? 3000 : 10000);
+            setTimeout(() => { state.eventActive = false; state.mode = 'idle'; }, duration);
+        } else { state.eventActive = false; }
+    }
+
+    function spawnMisc(type) {
+        const item = document.createElement('img');
+        item.src = assets.misc[type];
+        const size = type === 'crow' ? 120 : 100;
+        item.style = `position:fixed; width:${size}px; z-index:9998; pointer-events:none; transition: left 8s linear; top: ${Math.random() * (window.innerHeight - size)}px;`;
+        const startX = Math.random() < 0.5 ? -size : window.innerWidth + size;
+        item.style.left = `${startX}px`;
+
+        const movingRight = startX < 0;
+        if (type === 'crow') {
+            item.style.transform = movingRight ? 'scaleX(1)' : 'scaleX(-1)';
+        } else if (type === 'girl') {
+            item.style.transform = movingRight ? 'scaleX(-1)' : 'scaleX(1)';
+        }
+
+        document.body.appendChild(item);
+        setTimeout(() => { item.style.left = `${movingRight ? window.innerWidth + size : -size}px`; }, 100);
+        setTimeout(() => item.remove(), 9000);
+    }
+
+    function dropNavi() {
+        if (naviItem) return;
+        const navi = document.createElement('img');
+        navi.src = assets.misc.navi[Math.floor(Math.random()*3)];
+        navi.style = `position:fixed; width:120px; z-index:9997; pointer-events:none; transition: top 6s linear; top:-150px;`;
+        const x = Math.random() * (window.innerWidth - 120);
+        navi.style.left = `${x}px`;
+        document.body.appendChild(navi);
+        naviItem = navi;
+        naviLanded = false;
+        setTimeout(() => { 
+            navi.style.top = `${window.innerHeight - 150}px`; 
+        }, 100);
+        setTimeout(() => { naviLanded = true; }, 6000);
+        setTimeout(() => { if (naviItem === navi) { navi.remove(); naviItem = null; naviLanded = false; } }, 15000);
+    }
+
+    function triggerSugarRush() {
+        state.sugarRush = true;
+        state.vx = 20 * (Math.random() > 0.5 ? 1 : -1);
+        state.vy = 20 * (Math.random() > 0.5 ? 1 : -1);
+        setTimeout(() => state.sugarRush = false, 8000);
+    }
+
+    function showDialogue(t) {
+        bubble.innerText = t || dialogues[Math.floor(Math.random()*dialogues.length)];
+        bubble.style.opacity = 1;
+        setTimeout(() => bubble.style.opacity = 0, 4000);
+    }
+
+    setInterval(updatePhysics, 30);
+    setInterval(() => {
+        if (Math.random() < 0.2) showDialogue();
+        if (Math.random() < 0.2) triggerExpression();
+        if (Math.random() < 0.1) spawnMisc(Math.random() < 0.5 ? 'crow' : 'girl');
+    }, 15000);
+    
+    lain.onmousedown = (e) => {
+        state.isDragging = true;
+        window.onmousemove = (ev) => {
+            state.x = ev.clientX - 50; state.y = ev.clientY - 50;
+            draw();
+        };
+        window.onmouseup = () => { state.isDragging = false; window.onmousemove = null; };
+    };
+
+    window.Lain = {
+        forceRoll: () => triggerSpecialEvent('bear'),
+        forceBurn: () => triggerSpecialEvent('school'),
+        forceDance: () => triggerSpecialEvent('pink'),
+        dropNavi: () => dropNavi(),
+        sugarRush: () => triggerSugarRush(),
+        setOutfit: (o) => { if(assets[o]) state.outfit = o; },
+        spawnCrow: () => spawnMisc('crow'),
+        spawnGirl: () => spawnMisc('girl'),
+        speak: (t) => showDialogue(t),
+        express: () => triggerExpression()
+    };
+
+    console.log("%c Lain Pet Project by realmxrza ", "background: #000; color: #f0f; font-weight: bold; font-size: 14px;");
+    console.log("Commands:\n- Lain.setOutfit('bear'|'school'|'pink'|'default')\n- Lain.forceRoll()\n- Lain.forceBurn()\n- Lain.forceDance()\n- Lain.dropNavi()\n- Lain.spawnCrow()\n- Lain.spawnGirl()\n- Lain.speak('text')\n- Lain.express()");
 })();

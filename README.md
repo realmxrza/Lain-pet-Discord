@@ -1,8 +1,6 @@
 # Wired Pet: Lain
 by realmxrza
 
-Interactive physics-based desktop pet of Lain Iwakura. This script implements organic movement, momentum-based dragging, and a random Bear Lain for the Discord client. It also randomly talks on a text box.
-
 ### ( TEMPORARY )
 1. Press `Ctrl` + `Shift` + `I` to open Developer Tools.
 2. Go to the **Console** tab.
@@ -20,4 +18,3 @@ Interactive physics-based desktop pet of Lain Iwakura. This script implements or
 6. Scroll to the very bottom and paste the following line:
    `require("./Lain.js");`
 7. Save the file and restart Discord.
-

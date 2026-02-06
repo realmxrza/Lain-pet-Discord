@@ -197,7 +197,7 @@ const initLainPet = () => {
         const randomOutfit = outfits[Math.floor(Math.random() * outfits.length)];
         window.Lain.setOutfit(randomOutfit);
         
-        if (Math.random() < 0.10) {
+        if (Math.random() < 0.40) {
             triggerSpecialEvent();
         }
     }, 60000);

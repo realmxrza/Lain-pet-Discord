@@ -21,7 +21,3 @@ Interactive physics-based desktop pet of Lain Iwakura. This script implements or
    `require("./Lain.js");`
 7. Save the file and restart Discord.
 
-### Overview
-* **Bear Lain:** A 10% chance during any update cycle to trigger the onesie transformation. Duration is fixed at 7.1 seconds with a 10% scale increase.
-* **Wired Glitch:** Keyboard listeners trigger a CSS filter inversion and hue-rotation to simulate digital interference.
-* **Idle Tracking:** Entity enters AFK mode after 60 seconds of mouse inactivity, drifting toward the last known cursor coordinates.

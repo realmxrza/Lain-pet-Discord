@@ -25,8 +25,7 @@ const initLainPet = () => {
 
     const container = document.createElement('div');
     container.style = "position:fixed; z-index:9999; pointer-events:none; top:0; left:0; width:100vw; height:100vh;";
-    const shadow = document.createElement('div');
-    shadow.style = "position:absolute; background:rgba(0,0,0,0.3); border-radius:50%; filter:blur(4px); transition: all 0.3s;";
+    
     const lain = document.createElement('img');
     lain.style = "position:absolute; width:100px; pointer-events:auto; cursor:grab; transition: filter 0.2s; object-fit: contain;";
     const bubble = document.createElement('div');
@@ -35,7 +34,6 @@ const initLainPet = () => {
     expression.style = "position:absolute; width:50px; opacity:0; transition: opacity 0.3s; z-index:10001; pointer-events:none;";
 
     document.body.appendChild(container);
-    container.appendChild(shadow);
     container.appendChild(lain);
     container.appendChild(bubble);
     container.appendChild(expression);
@@ -94,10 +92,7 @@ const initLainPet = () => {
         lain.style.width = `${size}px`;
         lain.style.left = `${state.x}px`;
         lain.style.top = `${state.y}px`;
-        shadow.style.width = `${size * 0.7}px`;
-        shadow.style.height = `${size * 0.1}px`;
-        shadow.style.left = `${state.x + (size * 0.15)}px`;
-        shadow.style.top = `${state.y + (size * 0.9)}px`;
+
         bubble.style.left = `${state.x + (size/2) - 75}px`;
         bubble.style.top = `${state.y - 50}px`;
         expression.style.left = `${state.x + (size/2) - 25}px`;
@@ -198,16 +193,19 @@ const initLainPet = () => {
         express: () => triggerExpression()
     };
 
-    console.log("%c Lain Pet Project by realmxrza ", "background: #000; color: #f0f; font-weight: bold; font-size: 14px;");
-};
-
     setInterval(() => {
         const outfits = ['default', 'school', 'pink', 'bear', 'home'];
         const randomOutfit = outfits[Math.floor(Math.random() * outfits.length)];
-        
         window.Lain.setOutfit(randomOutfit);
         
-    }, 60000); // 60000ms = 1 minute
+        if (Math.random() < 0.10) {
+            triggerSpecialEvent();
+        }
+    }, 60000);
+
+    console.log("%c Lain Pet Project by realmxrza ", "background: #000; color: #f0f; font-weight: bold; font-size: 14px;");
+};
+
 // Vencord Preload Loader
 if (document.readyState === "complete") {
     initLainPet();

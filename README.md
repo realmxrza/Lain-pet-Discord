@@ -1,5 +1,5 @@
 # Wired Pet: Lain V2.0
-<img width="802" height="539" alt="image" src="https://github.com/user-attachments/assets/e568158b-e8c0-4219-a62a-c32a34eb4c3e" />
+<img width="800" height="500" alt="image" src="https://github.com/user-attachments/assets/31b92eef-277a-4096-9d1d-f34339408128" />
 
 ### ( TEMPORARY )
 1. Press `Ctrl` + `Shift` + `I` to open Developer Tools.

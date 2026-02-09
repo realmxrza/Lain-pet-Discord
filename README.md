@@ -10,6 +10,7 @@
 6. Hit `Enter`.
 
 ### ( VENCORD PRELOAD )
+[Download Lain.js](./Lain.js)
 1. Press `Win` + `R` on your keyboard.
 2. Paste `%appdata%\Vencord` and press `Enter`.
 3. Open the `dist` folder.

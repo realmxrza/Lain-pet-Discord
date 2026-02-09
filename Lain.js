@@ -1,6 +1,5 @@
 /**
  * Lain Pet Project by realmxrza
- * Optimized for Vencord Preload
  */
 const initLainPet = () => {
     const assets = {
